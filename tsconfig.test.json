@@ -6,9 +6,6 @@
         "sourceMap": true,
         "outDir": "dst"
     },
-    "exclude": [
-      "**/__test__/"
-    ],
     "include": [
       "src/**/*"
     ]

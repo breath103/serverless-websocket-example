@@ -11,10 +11,15 @@ There are few things you need to customize to starts.
     ```service: lambda-microservice-template # NOTE: update this with your service name```
 
 
-# How to invoke function on lambda
+## How to invoke function on lambda
 
 serverless invoke -f #{functionName}
 
-# How to invoke function locally
+## How to invoke function locally
 
 npm run invoke -- --function="hello"
+
+## Test
+
+this project use mocha + typescript for unit test. place test files as src/**/__test__/*.ts
+then run ```npm run test```

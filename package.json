@@ -6,14 +6,22 @@
   "scripts": {
     "build": "rm -Rf dst && tsc",
     "pack": "cp package.json dst/package.json && cd dst && npm install --cache=./.npm --production && zip -r ../dst.zip . ** && cd ..",
+
     "pretest": "tsc -p ./tsconfig.test.json",
-    "test": "mocha -t 20000 dst/__test__",
+    "test": "mocha dst/**/__test__/**/*.js",
+
     "invoke": "npm run build && node scripts/invoke.js",
     "deploy": "npm run build && npm run pack && serverless deploy"
   },
   "author": "Kurt Lee",
   "license": "ISC",
   "devDependencies": {
+    "@types/chai": "^3.4.34",
+    "@types/chai-as-promised": "0.0.29",
+    "@types/mocha": "^2.2.32",
+    "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
+    "mocha": "^3.1.2",
     "optimist": "^0.6.1",
     "serverless": "^1.0.3",
     "ts-node": "^1.6.0",
