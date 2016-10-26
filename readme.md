@@ -17,7 +17,7 @@ serverless invoke -f #{functionName}
 
 ## How to invoke function locally
 
-npm run invoke -- --function="hello"
+npm run invoke -- -f hello
 
 ## Test
 

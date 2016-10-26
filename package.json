@@ -1,11 +1,11 @@
 {
   "name": "lambda-microservice-template",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Template for microservice using lambda / typescript / serverless",
   "main": "index.js",
   "scripts": {
     "build": "rm -Rf dst && tsc",
-    "pack": "cp package.json dst/package.json && cd dst && npm install --cache=./.npm --production && zip -r ../dst.zip . ** && cd ..",
+    "pack": "rm -f dst.zip && cp package.json dst/package.json && cd dst && npm install --cache=./.npm --production && zip -r ../dst.zip . ** && cd ..",
 
     "pretest": "tsc -p ./tsconfig.test.json",
     "test": "mocha dst/**/__test__/**/*.js",
