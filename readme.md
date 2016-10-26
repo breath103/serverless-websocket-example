@@ -9,3 +9,12 @@ There are few things you need to customize to starts.
   - name service
 
     ```service: lambda-microservice-template # NOTE: update this with your service name```
+
+
+# How to invoke function on lambda
+
+serverless invoke -f #{functionName}
+
+# How to invoke function locally
+
+npm run invoke -- --function="hello"

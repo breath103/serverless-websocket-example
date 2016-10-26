@@ -4,15 +4,19 @@
   "description": "Template for microservice using lambda / typescript / serverless",
   "main": "index.js",
   "scripts": {
-    "build": "rm -Rf dst && tsc && cp package.json dst/package.json && cd dst && npm install --cache=./.npm --production && zip -r ../dst.zip . ** && cd ..",
+    "build": "rm -Rf dst && tsc",
+    "pack": "cp package.json dst/package.json && cd dst && npm install --cache=./.npm --production && zip -r ../dst.zip . ** && cd ..",
     "pretest": "tsc -p ./tsconfig.test.json",
     "test": "mocha -t 20000 dst/__test__",
-    "deploy" : "npm run build && serverless deploy"
+    "invoke": "npm run build && node scripts/invoke.js",
+    "deploy": "npm run build && npm run pack && serverless deploy"
   },
   "author": "Kurt Lee",
   "license": "ISC",
   "devDependencies": {
+    "optimist": "^0.6.1",
     "serverless": "^1.0.3",
+    "ts-node": "^1.6.0",
     "typescript": "^2.0.6"
   }
 }
