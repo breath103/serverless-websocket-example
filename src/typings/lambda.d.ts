@@ -24,7 +24,13 @@ interface Context {
     // Functions
     succeed(result?: Object): void;
     fail(error?: Error): void;
-    done(error?: Error, result?: Object): void; // result must be JSON.stringifyable
+    done(error?: Error, result?: {
+      statusCode: number;
+      headers: {
+        'Content-Type': string
+      };
+      body: string;
+    }): void; // result must be JSON.stringifyable
     getRemainingTimeInMillis(): number;
 }
 

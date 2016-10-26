@@ -7,7 +7,7 @@
     "build": "rm -Rf dst && tsc",
     "pack": "rm -f dst.zip && cp package.json dst/package.json && cd dst && npm install --cache=./.npm --production && zip -r ../dst.zip . ** && cd ..",
 
-    "pretest": "tsc -p ./tsconfig.test.json",
+    "pretest": "rm -Rf dst && tsc -p ./tsconfig.test.json",
     "test": "mocha dst/**/__test__/**/*.js",
 
     "invoke": "npm run build && node scripts/invoke.js",
