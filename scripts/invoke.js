@@ -20,6 +20,12 @@ function invoke() {
     },
     fail: function(error) {
       console.error("==> Fail: ", error);
+    },
+    done: function(error, result) {
+      if (error)
+        console.error("==> Fail: ", error);
+      else
+        console.log("==> Succeed: ", result);
     }
   }
   return handler(mockEvent, mockContext);
