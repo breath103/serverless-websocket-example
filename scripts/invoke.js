@@ -1,5 +1,6 @@
 const argv = require('optimist').argv;
 const handlers = require("../dst/handlers");
+const fs = require('fs');
 
 function invoke() {
   console.log(argv);
@@ -12,8 +13,12 @@ function invoke() {
     throw new Error(`function \"${argv.f}\" not exist`);
   }
 
-  const mockEvent = {
-  };
+  let mockEvent = {};
+  const mockEventPath = argv.e;
+  if (mockEventPath) {
+    mockEvent = JSON.parse(fs.readFileSync(argv.e).toString());
+  }
+
   const mockContext = {
     succeed: function(result) {
       console.log("==> Succeed: ", result);

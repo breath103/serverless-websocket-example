@@ -13,7 +13,8 @@ There are few things you need to customize to starts.
 
 ## How to invoke function on lambda
 
-serverless invoke -f #{functionName}
+serverless invoke -f #{functionName} -e #{mock_event.json path}
+for mockevent format, check lambda_proxy.d.ts
 
 ## How to invoke function locally
 

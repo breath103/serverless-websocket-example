@@ -1,0 +1,30 @@
+{
+  "resource": "some resource",
+  "path": "path",
+  "httpMethod": "GET",
+  "headers": {
+    "Accept": "application/json",
+    "Accept-Encoding": "utf-8",
+    "Accept-Language": "en",
+    "CloudFront-Forwarded-Proto": "",
+    "CloudFront-Is-Desktop-Viewer": "",
+    "CloudFront-Is-Mobile-Viewer": "",
+    "CloudFront-Is-SmartTV-Viewer": "",
+    "CloudFront-Is-Tablet-Viewer": "",
+    "CloudFront-Viewer-Country": "",
+    "Host": "www.lvh.me:3000",
+    "Upgrade-Insecure-Requests": "",
+    "User-Agent": "WEBKIT/SAFARI",
+    "Via": "Web",
+    "X-Amz-Cf-Id": "",
+    "X-Forwarded-For": "",
+    "X-Forwarded-Port": "",
+    "X-Forwarded-Proto": "",
+    "original-uri": "www.lvh.me:3000/hello"
+  },
+  "queryStringParameters": {
+    "param_1": "PARAM DATA",
+    "param_2": "PARAM DATA"
+  },
+  "body": "SOME EVENT BODY"
+}
