@@ -1,4 +1,4 @@
-export default function handler(event: any, context: Context) {
+export default function handler(event: LambdaProxyEvent, context: Context) {
   // Like this, you can serve html
   const response = {
     statusCode: 200,
