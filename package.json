@@ -4,14 +4,13 @@
   "description": "Template for microservice using lambda / typescript / serverless",
   "main": "index.js",
   "scripts": {
-    "build": "rm -Rf dst && tsc",
+    "build": "rm -Rf dst && tsc && cd src && find . -name '*.json' -type f -exec cp {} ../dst/{} \\; && cd ..",
     "pack": "rm -f dst.zip && cp package.json dst/package.json && cd dst && npm install --cache=./.npm --production && zip -r ../dst.zip . ** && cd ..",
-
-    "pretest": "rm -Rf dst && tsc -p ./tsconfig.test.json",
+    "pretest": "rm -Rf dst && tsc -p ./tsconfig.test.json && cd src && find . -name '*.json' -type f -exec cp {} ../dst/{} \\; && cd ..",
     "test": "mocha dst/**/__test__/**/*.js",
-
-    "invoke": "npm run build && node scripts/invoke.js",
-    "deploy": "npm run build && npm run pack && serverless deploy"
+    "invoke": "npm run pretest && node scripts/invoke.js",
+    "deploy": "npm run pretest && npm run pack && serverless deploy",
+    "start": "npm run invoke -- -f hello -e ./src/handlers/hello/__test__/mock_event.json"
   },
   "author": "Kurt Lee",
   "license": "ISC",
@@ -19,6 +18,7 @@
     "@types/chai": "^3.4.34",
     "@types/chai-as-promised": "0.0.29",
     "@types/mocha": "^2.2.32",
+    "@types/node": "^6.0.52",
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
     "mocha": "^3.1.2",
