@@ -23,8 +23,8 @@ interface Context {
 
     // Functions
     succeed(result?: Object): void;
-    fail(error?: Error): void;
-    done(error?: Error, result?: {
+    fail(error: Error): void;
+    done(error: Error | null, result?: {
       statusCode: number;
       headers: {
         'Content-Type': string

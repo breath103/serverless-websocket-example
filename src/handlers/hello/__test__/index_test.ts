@@ -26,10 +26,10 @@ describe("Hello", () => {
             succeed(result?: Object) {
               resolve(result);
             },
-            fail(error?: Error) {
+            fail(error: Error) {
               reject(error);
             },
-            done(error?: Error, result?: Object) {
+            done(error: Error | null, result?: Object) {
               if (error) reject(error);
               else resolve(result);
             },

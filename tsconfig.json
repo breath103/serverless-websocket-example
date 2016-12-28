@@ -4,12 +4,13 @@
         "target": "es6",
         "noImplicitAny": true,
         "sourceMap": true,
-        "outDir": "dst"
+        "outDir": "dst",
+        "strictNullChecks": true
     },
     "exclude": [
-      "**/__test__/"
+        "**/__test__/"
     ],
     "include": [
-      "src/**/*"
+        "src/**/*"
     ]
 }
