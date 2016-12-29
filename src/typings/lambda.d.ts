@@ -24,14 +24,16 @@ interface Context {
     // Functions
     succeed(result?: Object): void;
     fail(error: Error): void;
-    done(error: Error | null, result?: {
-      statusCode: number;
-      headers: {
-        'Content-Type': string
-      };
-      body: string;
-    }): void; // result must be JSON.stringifyable
+    done(error: Error | null, result?: LambdaResponse): void; // result must be JSON.stringifyable
     getRemainingTimeInMillis(): number;
+}
+
+interface LambdaResponse {
+  statusCode: number;
+  headers: {
+    'Content-Type': string
+  };
+  body: string;
 }
 
 interface CognitoIdentity {
