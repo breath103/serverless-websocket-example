@@ -1,3 +1,5 @@
+"use strict";
+
 const argv = require('optimist').argv;
 const handlers = require("../dst/handlers");
 const fs = require('fs');
