@@ -1,17 +1,12 @@
-import HandlerWrapper, { LambdaHandler } from './handler_wrapper'
-interface Handlers {
-  [handlerName: string]: LambdaHandler;
-}
-
-
+import HandlerWrapper from './handler_wrapper';
 
 // List of handlers
 import hello from './hello';
-import asyncHello from './async-hello';
+import helloAsync from './hello-async';
 
-const handlers: Handlers = {
-  hello: HandlerWrapper.syncHandler(hello),
-  asyncHello: HandlerWrapper.asyncHandler(asyncHello),
+const handlers = {
+  hello: HandlerWrapper.safelyWrap(hello),
+  helloAsync: HandlerWrapper.safelyWrap(helloAsync),
 };
 
 export = handlers;

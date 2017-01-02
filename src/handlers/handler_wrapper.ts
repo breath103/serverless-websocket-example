@@ -1,22 +1,21 @@
-type AsyncHandler = (event: LambdaProxyEvent) => Promise<LambdaResponse>;
-type SyncHandler = (event: LambdaProxyEvent, context: Context) => void;
-
-export type LambdaHandler = SyncHandler;
+import * as Base from '../interfaces/base';
 
 export default class HandlerWrapper {
-  static asyncHandler(handler: AsyncHandler) : LambdaHandler {
-    return (event: LambdaProxyEvent, context: Context) => {
-      handler(event).then(
-        (response) => {
-          context.done(null, response)
-        }, (error) => {
-          context.done(error)
-        }
-      )
-    }
-  }
+  static safelyWrap(handler: Function) {
+    return (event: Base.Event, context: Base.Context<Base.Response>) => {
+      const result = handler(event, context);
+      const isPromise = Promise.resolve(result) === result;
 
-  static syncHandler(handler: SyncHandler) : LambdaHandler {
-    return handler;
+      if (isPromise) {
+        const promise = result as Promise<Base.Response>;
+        promise.then(
+          (response) => {
+            context.done(null, response);
+          }, (error) => {
+            context.done(error);
+          }
+        )
+      }
+    }
   }
 }

@@ -1,4 +1,6 @@
-export default function handler(event: LambdaProxyEvent, context: Context) {
+import * as LambdaProxy from '../../interfaces/lambda-proxy';
+
+export default function handler(event: LambdaProxy.Event, context: LambdaProxy.Context) {
   // Like this, you can serve html
   const response = {
     statusCode: 200,

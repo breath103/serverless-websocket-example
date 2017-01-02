@@ -2,6 +2,15 @@
 this is for all the developers who building microservice (usually http) based on
 AWS Gateway / AWS Lambda, Plus sweet typescript / serverless framework
 
+# Examples
+
+1. `hello`
+    - Basic example showing how to build HTTP based microservice (with API Gateway)
+2. `hello-async`
+    - example showing how to build service with async handler
+3. `hello-kinesis-stream`
+    - example showing how to build kinesis-stream worker. [AWS Document](http://docs.aws.amazon.com/lambda/latest/dg/with-kinesis.html)
+
 # How to start?
 There are few things you need to customize to starts.
 
@@ -9,7 +18,6 @@ There are few things you need to customize to starts.
   - name service
 
     ```service: lambda-microservice-template # NOTE: update this with your service name```
-
 
 ## How to invoke function on lambda
 

@@ -1,4 +1,6 @@
-export default async function handler(event: LambdaProxyEvent) {
+import * as LambdaProxy from '../../interfaces/lambda-proxy';
+
+export default async function handler(event: LambdaProxy.Event) {
   const response = await new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve({
