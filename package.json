@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "rm -Rf dst && tsc && babel dst --out-dir dst && cd src && find . -name '*.json' -type f -exec cp {} ../dst/{} \\; && cd ..",
-    "pack": "rm -f dst.zip && cp package.json dst/package.json && cd dst && npm install --cache=./.npm --production && zip -r ../dst.zip . ** && cd ..",
+    "pack": "rm -f dst.zip && cp package.json dst/package.json && (cp .npmrc dst/.npmrc || true) && cd dst && npm install --cache=./.npm --production && zip -r ../dst.zip . ** && cd ..",
     "pretest": "rm -Rf dst && tsc -p ./tsconfig.test.json && babel dst --out-dir dst && cd src && find . -name '*.json' -type f -exec cp {} ../dst/{} \\; && cd ..",
     "test": "mocha dst/**/__test__/**/*.js",
     "invoke": "npm run pretest && node scripts/invoke.js",
