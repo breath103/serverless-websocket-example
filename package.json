@@ -74,5 +74,8 @@
     "serverless": "^1.5.0",
     "ts-node": "^1.6.0",
     "typescript": "^2.1.5"
+  },
+  "dependencies": {
+    "raven": "^1.1.1"
   }
 }
