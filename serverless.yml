@@ -11,7 +11,10 @@
 #
 # Happy Coding!
 
-service: lambda-microservice-template
+service: microservice-template
+
+plugins:
+  - sentry-serverless-plugin
 
 provider:
   name: aws
