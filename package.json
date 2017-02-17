@@ -73,6 +73,7 @@
     "cli-color": "^1.1.0",
     "lodash": "^4.17.4",
     "mocha": "^3.1.2",
+    "optimist": "^0.6.1",
     "sentry-api": "^0.1.1",
     "serverless": "^1.6.0",
     "ts-node": "^1.6.0",
