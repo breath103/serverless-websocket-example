@@ -1,9 +1,9 @@
 import * as LambdaProxy from '../../interfaces/lambda-proxy';
 
-import { LambdaProxyRaven } from '../../helpers/lambda_proxy_raven';
+import raven from '../../helpers/raven-helper';
 
 export default async function handler(event: LambdaProxy.Event) {
-  const raven = new LambdaProxyRaven(event);
+  raven.setContext({ event: event });
 
   try {
     const response = await new Promise((resolve, reject) => {

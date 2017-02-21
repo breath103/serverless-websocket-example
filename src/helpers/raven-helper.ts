@@ -1,15 +1,9 @@
-import * as LambdaProxy from '../interfaces/lambda-proxy';
 import Raven = require('raven');
+let ravenInitialized = false;
 
-export class LambdaProxyRaven {
-  constructor(private event: LambdaProxy.Event) {
-    if (!process.env.RAVEN_KEY) {
-      throw new Error("RAVEN KEY must be provided in order to use raven");
-    }
-    Raven.config(process.env.RAVEN_KEY).install();
-    Raven.setContext({
-      event: event,
-    });
+export class RavenHelper {
+  setContext(context: any) {
+    Raven.setContext(context);
   }
 
   capture(e: any) {
@@ -29,3 +23,11 @@ export class LambdaProxyRaven {
     })
   }
 }
+
+if (!process.env.RAVEN_KEY) throw new Error(`process.env.RAVEN_KEY not exist`);
+
+Raven.config(process.env.RAVEN_KEY).install();
+
+const singleton = new RavenHelper();
+
+export default singleton;
