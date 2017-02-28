@@ -3,8 +3,8 @@ IS_MASTER_BUILD = (env.BRANCH_NAME == MAIN_BRANCH)
 
 node(label: 'Small') {
   withDockerRegistry(registry: [credentialsId: 'docker-hub', url: 'https://index.docker.io/v1/']) {
-    docker.image('vingle/dingle').pull()
-    withDockerContainer([image: 'vingle/dingle']) {
+    docker.image('node:6.6.0').pull()
+    withDockerContainer([image: 'node:6.6.0']) {
       stage('Checkout SCM') {
         checkout scm
       }
