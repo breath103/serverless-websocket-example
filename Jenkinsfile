@@ -3,8 +3,8 @@ IS_MASTER_BUILD = (env.BRANCH_NAME == MAIN_BRANCH)
 
 node(label: 'Small') {
   withDockerRegistry(registry: [credentialsId: 'docker-hub', url: 'https://index.docker.io/v1/']) {
-    docker.image('node:6.6.0').pull()
-    withDockerContainer([image: 'node:6.6.0']) {
+    docker.image('vingle/lambda-microservice-template').pull()
+    withDockerContainer([image: 'vingle/lambda-microservice-template']) {
       stage('Checkout SCM') {
         checkout scm
       }
