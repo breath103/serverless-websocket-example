@@ -1,4 +1,4 @@
-import * as Base from '../interfaces/base';
+import * as Base from "../interfaces/base";
 
 export default class HandlerWrapper {
   static safelyWrap(handler: Function) {
@@ -14,8 +14,8 @@ export default class HandlerWrapper {
           }, (error) => {
             context.done(error);
           }
-        )
+        );
       }
-    }
+    };
   }
 }

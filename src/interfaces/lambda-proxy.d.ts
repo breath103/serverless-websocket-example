@@ -1,7 +1,7 @@
-import * as Base from './base';
+import * as Base from "./base";
 
 // Event
-export interface Event extends Base.Event{
+export interface Event extends Base.Event {
   resource?: string;
   path?: string;
   httpMethod?: string;
@@ -73,7 +73,7 @@ export interface EventStageVariables {
 export interface Response extends Base.Response {
   statusCode: number;
   headers: {
-    'Content-Type': string
+    "Content-Type": string
   };
   body: string;
 }

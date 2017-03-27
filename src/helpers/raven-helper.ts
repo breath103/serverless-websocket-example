@@ -1,4 +1,4 @@
-import Raven = require('raven');
+import Raven = require("raven");
 let ravenInitialized = false;
 
 export class RavenHelper {
@@ -12,15 +12,15 @@ export class RavenHelper {
         // This callback fires once the report has been sent to Sentry
         if (error) {
           console.error(error);
-          console.error('Failed to send captured exception to Sentry');
+          console.error("Failed to send captured exception to Sentry");
         } else {
-          console.log('eventID : ', eventId);
-          console.log('Captured exception and send to Sentry successfully');
+          console.log("eventID : ", eventId);
+          console.log("Captured exception and send to Sentry successfully");
         }
 
         resolve();
       });
-    })
+    });
   }
 }
 
