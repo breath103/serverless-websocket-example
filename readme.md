@@ -1,109 +1,58 @@
-![](https://camo.githubusercontent.com/547c6da94c16fedb1aa60c9efda858282e22834f/687474703a2f2f7075626c69632e7365727665726c6573732e636f6d2f6261646765732f76332e737667)
+# Microservice Name
 
-# What's this for?
-this is for all the developers who building microservice (usually http) based on
-AWS Gateway / AWS Lambda, Plus sweet typescript / serverless framework
+## Bussiness Domain
+Simple, Easy to read, "One Sentence" Description
 
-# Examples
+```
+ex) User Recommendation On Vingle
+    Feed on Vingle
+    Interest Recommendation On Vingle
+```
 
-1. `hello`
-    - Basic example showing how to build HTTP based microservice (with API Gateway)
-2. `hello-async`
-    - example showing how to build service with async handler
-3. `hello-kinesis-stream`
-    - example showing how to build kinesis-stream worker. [AWS Document](http://docs.aws.amazon.com/lambda/latest/dg/with-kinesis.html)
+## Responsibility
+Clear and Specific description about Responsibility of the service.
+be mind that it should specify the "work" that could be directly understandable to developer also. such as "Rendering"  / "Business Logic" / "Persistency" / "Tracking".. etc
 
-# How to start?
-There are few things you need to customize to starts.
-
-1) serverless.yml
-  - name service
-
-    ```service: lambda-microservice-template # NOTE: update this with your service name```
-
-## How to invoke function on lambda
-
-serverless invoke -f #{functionName} -e #{mock_event.json path}
-for mockevent format, check lambda_proxy.d.ts
-
-## How to invoke function locally
-
-npm run invoke -- -f hello
-
-## Test
-
-this project use mocha + typescript for unit test. place test files as src/**/__test__/*.ts
-then run ```npm run test```
+```
+ex) user recommendation business logic & recommendation history logging
+```
 
 
-## Typescript coding rules
-1. Ambient declaration is not "Global" declaration.
-    Ambient declaration is really handy, but be mind that it's reason-of-being is to
-    ```
-      A major design goal of TypeScript was to make it possible for you
-      to safely and easily use existing JavaScript libraries in TypeScript.
-      TypeScript does this by means of declaration
-    ```
-    [reference](https://basarat.gitbooks.io/typescript/content/docs/types/ambient/intro.html)
-    in other words, it's not for sharing declaration globally. don't make Ambient declaration just to share certain interface or types.
-    use it only for providing Typescript definition to already existing Javascript libraries
+## Architecture Diagram
+Simple diagram representing the architecture, which showing
+1. Infrastrcture resources the service is using. such as "DynamoDB" / "RDS"
+2. Other microservices that the service is consuming. such as "Vingle Feed" / "Color Extractor"
+<p align="center"><img width="500px" src="http://www.conceptdraw.com/solution-park/resource/images/solutions/_aws_simple_icons/Computer-and-Networks-AWS-Architecture-Diagram-2-Tier-Auto-Scalable-Web-Application-Architecture-in-1-AZ.png" /></p>
+
+## Infrastructures
+Link to resources that deployed. such as link to "Cloudformation" or "Lambda" or "CloudWatch"
 
 
-# Sentry Plugin
+## Usage
 
-this project includes serverless-sentry-plugin, at local.
---org means Sentry Organization slug,
---team means Sentry Team slug,
-for further usage check sls sentry --help
+Description about "How developer consume this service"
 
-1. Create Sentry project from serverless.yml setting
-    ```
-        $(npm bin)/sls sentry create --org vingle --team vingle -s stage
-    ```
-2. Get created sentry project info, and put it into serverless environment
-    ```
-        $(npm bin)/sls sentry info --org vingle --team vingle -s stage
-    ```
-    this gonna show
-    ```
-        PROJECT_URL : https://sentry.io/vingle/${project_slug}/
-        RAVEN_KEY : https://xxxx:xxxx@sentry.io/135184
-    ```
-    Then, put RAVEN_KEY: https://xxxx:xxxx@sentry.io/135184 serverless.yml
+Most commonly it will be "HTTP Restful API", so than you could just list up the APIs.
 
-    and then you can use raven like
-    ```
-        import * as LambdaProxy from '../../interfaces/lambda-proxy';
-        import { LambdaProxyRaven } from '../../helpers/lambda_proxy_raven';
+```
+Content-Type: 'application/json'
+Authorization: 'token'
 
-        export default async function handler(event: LambdaProxy.Event) {
-            const raven = new LambdaProxyRaven(event);
+GET api/users/recommendations
+POST api/users/recommendations/:recommendationId/feedback
+```
 
-            try {
-                const response = await new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    resolve({
-                    statusCode: 200,
-                    headers: {
-                        'Content-Type': 'text/html'
-                    },
-                    body: `
-                        <html>
-                        <body>
-                            <h1> TITLE </h1>
-                        </body>
-                        </html>
-                    `
-                    });
-                }, 1);
-                });
+but also, it could be a simple background worker such as Kinesis Stream consumer, or S3 Event handler
 
-                return response;
-            } catch (e) {
-                await raven.capture(e);
-                return null;
-            }
-        }
-    ```
+in such case, just describe how we can "Use" this service by sending event on Kinesis Stream or S3
 
-    Currently, Sentry support is specialized for Lambda-Proxy event
+
+## Maintainer
+
+Specify who is mainly responsible for this service. meaning of responsible here is that who knows this service most, and who can help and manage other peoples to make change on the service.
+it could be serveral peoples also
+
+```
+ex) spam-checker -> mooyeol
+    TrackTicket -> Kurt / Shin
+```

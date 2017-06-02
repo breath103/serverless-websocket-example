@@ -31,7 +31,7 @@
     "optimist": "0.6.1",
     "sentry-api": "0.1.1",
     "serverless": "1.6.0",
-    "typescript": "2.2.2"
+    "typescript": "2.3.4"
   },
   "dependencies": {
     "raven": "1.1.1"
