@@ -1,8 +1,7 @@
-
-import * as Base from './base';
+import * as Base from "./base";
 
 // Event
-export interface Event extends Base.Event{
+export interface Event extends Base.Event {
   Records?: KinesisRecord[];
 }
 
@@ -28,4 +27,4 @@ export interface Response extends Base.Response {
 }
 
 // Context
-export interface Context extends Base.Context<Response> {}
+export type Context = Base.Context<Response>;

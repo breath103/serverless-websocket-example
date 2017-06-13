@@ -1,6 +1,7 @@
-import * as Base from '../interfaces/base';
+import * as Base from "../interfaces/base";
 
 export default class HandlerWrapper {
+  // tslint:disable-next-line
   static safelyWrap(handler: Function) {
     return (event: Base.Event, context: Base.Context<Base.Response>) => {
       const result = handler(event, context);
@@ -13,9 +14,9 @@ export default class HandlerWrapper {
             context.done(null, response);
           }, (error) => {
             context.done(error);
-          }
-        )
+          },
+        );
       }
-    }
+    };
   }
 }

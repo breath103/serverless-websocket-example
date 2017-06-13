@@ -1,8 +1,8 @@
-import HandlerWrapper from './handler_wrapper';
+import HandlerWrapper from "./handler_wrapper";
 
 // List of handlers
-import hello from './hello';
-import helloAsync from './hello-async';
+import hello from "./hello";
+import helloAsync from "./hello-async";
 
 const handlers = {
   hello: HandlerWrapper.safelyWrap(hello),

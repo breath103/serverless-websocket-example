@@ -1,9 +1,9 @@
-import * as LambdaProxy from '../../interfaces/lambda-proxy';
+import * as LambdaProxy from "../../interfaces/lambda-proxy";
 
-import raven from '../../helpers/raven-helper';
+import raven from "../../helpers/raven-helper";
 
 export default async function handler(event: LambdaProxy.Event) {
-  raven.setContext({ event: event });
+  raven.setContext({ event });
 
   try {
     const response = await new Promise((resolve, reject) => {
@@ -11,7 +11,7 @@ export default async function handler(event: LambdaProxy.Event) {
         resolve({
           statusCode: 200,
           headers: {
-            'Content-Type': 'text/html'
+            "Content-Type": "text/html",
           },
           body: `
             <html>
@@ -19,7 +19,7 @@ export default async function handler(event: LambdaProxy.Event) {
                 <h1> TITLE </h1>
               </body>
             </html>
-          `
+          `,
         });
       }, 1);
     });
