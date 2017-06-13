@@ -68,14 +68,13 @@ export interface EventStageVariables {
   [key: string]: string;
 }
 
-
 // Response
 export interface Response extends Base.Response {
   statusCode: number;
   headers: {
-    "Content-Type": string
+    "Content-Type": string,
   };
   body: string;
 }
 
-export interface Context extends Base.Context<Response> {}
+export type Context = Base.Context<Response>;

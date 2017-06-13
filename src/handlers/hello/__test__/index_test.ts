@@ -3,8 +3,9 @@ import * as chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
 chai.should();
 
+import * as LambdaProxy from "../../../interfaces/lambda-proxy";
 import handler from "../index";
-const mockEvent = require("./mock_event.json");
+const mockEvent = require("./mock_event.json"); // tslint:disable-line
 
 describe("Hello", () => {
   describe("handler", () => {
@@ -23,20 +24,23 @@ describe("Hello", () => {
             logStreamName: "mock",
 
             // Functions
-            succeed(result?: Object) {
+            succeed(result?: LambdaProxy.Response) {
               resolve(result);
             },
             fail(error: Error) {
               reject(error);
             },
-            done(error: Error | null, result?: Object) {
-              if (error) reject(error);
-              else resolve(result);
+            done(error: Error | null, result?: LambdaProxy.Response) {
+              if (error) {
+                reject(error);
+              } else {
+                resolve(result);
+              }
             },
             getRemainingTimeInMillis() {
               return 1;
-            }
-          }
+            },
+          },
         );
       });
     });

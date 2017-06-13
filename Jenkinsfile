@@ -13,6 +13,10 @@ node(label: 'Small') {
         sh 'npm install --cache=./.npm --quiet'
       }
 
+      stage('Lint') {
+        sh 'npm run lint'
+      }
+
       stage('Test') {
         sh 'npm run test'
       }

@@ -4,22 +4,22 @@ chai.use(chaiAsPromised);
 chai.should();
 
 import handler from "../index";
-const mockEvent = require("./mock_event.json");
+const mockEvent = require("./mock_event.json"); // tslint:disable-line
 
 describe("HelloKinesisStream", () => {
   describe("handler", () => {
     it("should work", async () => {
       const result = await handler(mockEvent);
       result.should.be.deep.eq({
-        "count": 1,
-        "payloads": [
+        count: 1,
+        payloads: [
           {
-            "sampleData": [
+            sampleData: [
               100,
-              200
-            ]
-          }
-        ]
+              200,
+            ],
+          },
+        ],
       });
     });
   });

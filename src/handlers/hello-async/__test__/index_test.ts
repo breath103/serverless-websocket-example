@@ -4,7 +4,7 @@ chai.use(chaiAsPromised);
 chai.should();
 
 import handler from "../index";
-const mockEvent = require("./mock_event.json");
+const mockEvent = require("./mock_event.json"); // tslint:disable-line
 
 describe("HelloAsync", () => {
   describe("handler", () => {

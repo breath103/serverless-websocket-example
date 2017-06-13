@@ -1,6 +1,6 @@
 // Event
-export interface Event {}
-export interface Response {}
+export interface Event {} // tslint:disable-line
+export interface Response {} // tslint:disable-line
 
 // Context
 
@@ -28,7 +28,7 @@ export interface Context<T> {
     clientContext?: ClientContext;
 
     // Functions
-    succeed(result?: Object): void;
+    succeed(result?: T): void;
     fail(error: Error): void;
     done(error: Error | null, result?: T): void; // result must be JSON.stringifyable
     getRemainingTimeInMillis(): number;

@@ -27,4 +27,4 @@ export interface Response extends Base.Response {
 }
 
 // Context
-export interface Context extends Base.Context<Response> {}
+export type Context = Base.Context<Response>;
