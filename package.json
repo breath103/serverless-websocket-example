@@ -3,6 +3,10 @@
   "version": "1.0.1",
   "description": "Template for microservice using lambda / typescript / serverless",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/balmbees/lambda-microservice-template.git"
+  },
   "scripts": {
     "build": "rm -Rf dst && tsc && cd src && find . -name '*.json' -type f -exec cp {} ../dst/{} \\; && cd ..",
     "pack-local": "rm -f dst.zip && cp package.json dst/package.json && (cp .npmrc dst/.npmrc || true) && cd dst && ln -s ../node_modules node_modules && npm ls && zip -r ../dst.zip . ** && cd ..",
