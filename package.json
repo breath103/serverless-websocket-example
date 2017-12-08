@@ -24,7 +24,8 @@
     "info:prod": "sls info -s prod"
   },
   "engines": {
-    "node": "6.10.*"
+    "node": "6.10.*",
+    "npm": "^5.6.0"
   },
   "author": "Kurt Lee",
   "license": "ISC",
