@@ -5,9 +5,15 @@
         "noImplicitAny": true,
         "sourceMap": true,
         "outDir": "dst",
+        "strict": false,
         "strictNullChecks": true,
         "experimentalDecorators": true,
-        "emitDecoratorMetadata": true
+        "emitDecoratorMetadata": true,
+        "lib": [
+            "dom",
+            "es2015",
+            "esnext.asynciterable"
+        ]
     },
     "exclude": [
         "**/__test__/"
