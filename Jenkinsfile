@@ -1,7 +1,7 @@
 pipeline {
   agent {
     docker {
-      image 'vingle/lambda-microservice-template'
+      image 'vingle/lambda-microservice-template:nodejs8.10'
       label 'Small'
     }
   }

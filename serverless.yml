@@ -2,15 +2,15 @@ service: microservice-template
 
 provider:
   name: aws
-  runtime: nodejs6.10
+  runtime: nodejs8.10
   stage: prod
 
 package:
   artifact: dst.zip
 
 functions:
-  hello:
-    handler: handlers.hello
+  helloAsync:
+    handler: handlers.helloAsync
     events:
       - http:
           path: hello

@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "module": "commonjs",
-        "target": "es6",
+        "target": "es2017",
         "noImplicitAny": true,
         "sourceMap": true,
         "outDir": "dst",
@@ -10,8 +10,7 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "lib": [
-            "dom",
-            "es2015",
+            "esnext",
             "esnext.asynciterable"
         ]
     },
