@@ -26,11 +26,6 @@ export interface Context<T> {
     logStreamName: string;
     identity?: CognitoIdentity;
     clientContext?: ClientContext;
-
-    // Functions
-    succeed(result?: T): void;
-    fail(error: Error): void;
-    done(error: Error | null, result?: T): void; // result must be JSON.stringifyable
     getRemainingTimeInMillis(): number;
 }
 
