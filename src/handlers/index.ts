@@ -1,9 +1,9 @@
+import * as debug from "debug";
 
-// List of handlers
-import helloAsync from "./hello-async";
+import * as LambdaProxy from "../interfaces/lambda-proxy";
 
-const handlers = {
-  helloAsync,
-};
-
-export = handlers;
+const logger = debug("Websocket");
+export const websocket = async function(event: LambdaProxy.Event) {
+  logger("%j", event);
+  return true;
+}

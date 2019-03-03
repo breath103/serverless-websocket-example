@@ -1,13 +1,15 @@
-service: microservice-template
+service: serverless-websocket-example
 
 provider:
   name: aws
   runtime: nodejs8.10
   stage: prod
+  websocketApiRouteSelectionExpression: $request.body.action
 
 plugins:
   - serverless-prune-plugin
   - "@vingle/serverless-tag-plugin"
+  - serverless-websockets-plugin
 
 custom:
   prune:
@@ -18,9 +20,36 @@ package:
   artifact: dst.zip
 
 functions:
-  helloAsync:
-    handler: handlers.helloAsync
+  websocketHandler:
+    handler: handlers.websocket
     events:
-      - http:
-          path: hello
-          method: get
+      - websocket:
+          routeKey: $connect
+      - websocket:
+          routeKey: $disconnect
+      - websocket:
+          routeKey: $default
+
+  # connectionHandler:
+  #   handler: src/handler.handler
+  #   events:
+  #     - websocket:
+  #         routeKey: $connect
+  #     - websocket:
+  #         routeKey: $disconnect
+  # defaultHandler:
+  #   events:
+  #     - websocket:
+  #         routeKey: $default
+  # actionHandler:
+  #   events:
+  #     - websocket:
+  #         routeKey: myAction
+
+# functions:
+#   helloAsync:
+#     handler: handlers.helloAsync
+#     events:
+#       - http:
+#           path: hello
+#           method: get
