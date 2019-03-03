@@ -10,8 +10,7 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "lib": [
-            "esnext",
-            "esnext.asynciterable"
+            "es2017"
         ]
     },
     "include": [
