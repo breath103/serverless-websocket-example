@@ -36,7 +36,7 @@ package:
 
 functions:
   websocketHandler:
-    handler: handlers.websocket
+    handler: websocket.handler
     events:
       - websocket:
           route: $connect
@@ -45,6 +45,14 @@ functions:
       - websocket:
           route: $default
 
+  frontend:
+    timeout: 30
+    memorySize: 256
+    handler: frontend.handler
+    events:
+      - http:
+          path: /{proxy+}
+          method: any
 resources:
   Resources:
     DynamoDBSessionTable:
