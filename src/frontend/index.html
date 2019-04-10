@@ -22,16 +22,39 @@
           el: '#app',
           data: {},
         });
+
+        // Connect Websocket
+        function connect() {
+          const wsURL = new URL(window.location.href);
+          wsURL.protocol = "wss";
+          wsURL.pathname = url.pathname.split("/").slice(0, 2).join("/");
+
+          const socket = new WebSocket(wsURL);
+          socket.onmessage((event) => {
+            console.log("Message :", event);
+          });
+          socket.onopen((event) => {
+            console.log("Open :", event);
+          });
+          socket.onerror((event) => {
+            console.log("Error :", event);
+          });
+          socket.onclose((event) => {
+            console.log("Close :", event);
+          });
+        }
+
+        connect();
       });
     </script>
-    <title>Discover Information</title>
+    <title>Quiz</title>
   </head>
 
   <body>
     <div id="app">
       <div class="jumbotron jumbotron-fluid">
         <div class="container">
-          <h1 class="display-4">Chat</h1>
+          <h1 class="display-4">Quiz</h1>
         </div>
       </div>
     </div>
