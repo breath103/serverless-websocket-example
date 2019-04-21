@@ -1,94 +1,59 @@
-import * as Event from "aws-lambda";
-import * as AWS from "aws-sdk";
+import { APIGatewayProxyHandler } from "aws-lambda";
 import * as debug from "debug";
 
-import { Session } from "../models";
+import {
+  ClientMessage,
+  SessionManager,
+} from "./session_manager";
 
 const logger = debug("Websocket");
 
-let apiGateway: AWS.ApiGatewayManagementApi;
+const sessionManager = new SessionManager();
 
-export async function handler(event: Event.APIGatewayProxyEvent): Promise<Event.APIGatewayProxyResult> {
-  logger("%O", event);
-
+export const handler: APIGatewayProxyHandler = async (event) => {
   const context = event.requestContext;
-  const connectionId = context.connectionId!;
+  const sessionId = context.connectionId!;
   const routeKey = context.routeKey as "$connect" | "$disconnect" | "$default";
 
-  if (!apiGateway) {
-    // Echo
-    apiGateway = new AWS.ApiGatewayManagementApi({ endpoint: `https://${context.domainName}/${context.stage}` });
-  }
+  logger("%O", event);
 
-  switch (routeKey) {
-    case "$connect": {
-      // Create Session.
-      const session = new Session();
-      session.sessionId = connectionId;
-      session.metadata = {
-        createdAt: Date.now(),
-      };
-      await session.save();
+  try {
+    if (routeKey === "$connect") {
+      await sessionManager.createSession(sessionId);
+      await sessionManager.sendMessageToClient(sessionId, { type: "user_connected", sessionId });
 
-      return {
-        statusCode: 200,
-        body: "Connected",
-      };
-    }
-    case "$disconnect": {
-      const session = await Session.primaryKey.get(connectionId);
-      if (session) {
-        await session.delete();
-      }
-      return {
-        statusCode: 200,
-        body: "Disconneted",
-      };
-    }
-    case "$default": {
-      try {
-        const payload = JSON.parse(event.body!) as {
-          action: string,
-          data: string,
-        };
+    } else if (routeKey === "$disconnect") {
+      await sessionManager.destorySession(sessionId);
 
-        // Send Data
-        await apiGateway.postToConnection({
-          ConnectionId: connectionId, // connectionId of the receiving ws-client
-          Data: JSON.stringify({
-            connectionId,
-            body: event.body,
-          }),
-        }).promise();
+    } else {
+      // All the other actions
+      const payload = JSON.parse(event.body!) as ClientMessage;
 
-        const session = await Session.primaryKey.get(connectionId);
-        if (session) {
-          session.metadata.messages = session.metadata.messages || [];
-          session.metadata.messages.push(payload);
-          await session.save();
-        }
-
-        return {
-          statusCode: 200,
-          body: "Success",
-        };
-      } catch (e) {
-        return {
-          statusCode: 500,
-          body: `Malformed event body: ${event.body}`,
-        };
+      switch (payload.type) {
+        // tslint:disable:align
+        case "create_chat_message": {
+          await sessionManager.broadcastMessageToClient({
+            type: "chat_message_created",
+            message: payload.message,
+            sessionId,
+          });
+        } break;
+        default: {
+          throw new Error(`Invalid message: ${payload.toString()}`);
+        } break;
+        // tslint:enable:align
       }
     }
+  } catch (e) {
+    logger("$default Error: %j\n%o", event.body, e);
+    return {
+      statusCode: 500,
+      body: `Malformed event body: ${event.body}`,
+    };
   }
-}
 
-async function broadcast(payload: any) {
-  const sessionScan = await Session.primaryKey.scan({});
-
-  await Promise.all(sessionScan.records.map(async (record) => {
-    await apiGateway.postToConnection({
-      ConnectionId: record.sessionId, // connectionId of the receiving ws-client
-      Data: JSON.stringify(payload),
-    }).promise();
-  }));
-}
+  return {
+    statusCode: 200,
+    body: "Connected",
+  };
+};

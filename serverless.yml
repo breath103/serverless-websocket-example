@@ -51,8 +51,12 @@ functions:
     handler: frontend.handler
     events:
       - http:
+          path: /
+          method: any
+      - http:
           path: /{proxy+}
           method: any
+
 resources:
   Resources:
     DynamoDBSessionTable:
@@ -66,3 +70,15 @@ resources:
         KeySchema:
           - AttributeName: i
             KeyType: HASH
+
+    # DynamoDBSessionTable:
+    #   Type: AWS::DynamoDB::Table
+    #   Properties:
+    #     BillingMode: PAY_PER_REQUEST
+    #     TableName: room_prod_sessions
+    #     AttributeDefinitions:
+    #       - AttributeName: i
+    #         AttributeType: S
+    #     KeySchema:
+    #       - AttributeName: i
+    #         KeyType: HASH

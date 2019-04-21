@@ -18,33 +18,61 @@
 
     <script type="text/javascript">
       $(function () {
-        window.app = new Vue({
+        const app = new Vue({
           el: '#app',
-          data: {},
+          data: {
+            socket: null,
+            message: "",
+            sessionId: null,
+            messages: [],
+          },
+          methods: {
+            sendMessage(event) {
+              console.log(this.message);
+
+              if (this.message) {
+                this.socket.send(JSON.stringify({
+                  type: "create_chat_message",
+                  message: this.message,
+                }));
+
+                this.message = "";
+              }
+            },
+            connect() {
+              const socket = new WebSocket("wss://nij9jx7po5.execute-api.us-east-1.amazonaws.com/prod");
+              socket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                console.log("Message :", data);
+                switch (data.type) {
+                  case "user_connected": {
+                    this.sessionId = data.sessionId;
+                  } break;
+                  case "chat_message_created": {
+                    this.messages.push({
+                      message: data.message,
+                      sessionId: data.sessionId,
+                    });
+                  } break;
+                }
+              };
+              socket.onopen = (event) => {
+                console.log("Open :", event);
+              };
+              socket.onerror = (event) => {
+                console.log("Error :", event);
+              };
+              socket.onclose = (event) => {
+                console.log("Close :", event);
+              };
+              this.socket = socket;
+            }
+          }
         });
 
-        // Connect Websocket
-        function connect() {
-          const wsURL = new URL(window.location.href);
-          wsURL.protocol = "wss";
-          wsURL.pathname = url.pathname.split("/").slice(0, 2).join("/");
+        app.connect();
 
-          const socket = new WebSocket(wsURL);
-          socket.onmessage((event) => {
-            console.log("Message :", event);
-          });
-          socket.onopen((event) => {
-            console.log("Open :", event);
-          });
-          socket.onerror((event) => {
-            console.log("Error :", event);
-          });
-          socket.onclose((event) => {
-            console.log("Close :", event);
-          });
-        }
-
-        connect();
+        window.app = app;
       });
     </script>
     <title>Quiz</title>
@@ -55,6 +83,18 @@
       <div class="jumbotron jumbotron-fluid">
         <div class="container">
           <h1 class="display-4">Quiz</h1>
+          <div>SessionID: {{ this.sessionId }}</div>
+          <div>
+            <ul>
+              <li v-for="message in messages">
+                {{ message }}
+              </li>
+            </ul>
+          </div>
+          <div>
+            <input type="text" v-model="message"/>
+            <button class="btn btn-primary" v-on:click="sendMessage">Send</button>
+          </div>
         </div>
       </div>
     </div>
