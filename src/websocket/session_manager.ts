@@ -6,14 +6,20 @@ export class SessionManager {
     endpoint: `https://nij9jx7po5.execute-api.us-east-1.amazonaws.com/prod`
   });
 
-  public async createSession(connectionId: string) {
+  public async createSession(
+    connectionId: string,
+    userId: string
+  ) {
     // Create Session.
     const session = new Session();
     session.sessionId = connectionId;
-    session.metadata = {
-      createdAt: Date.now(),
-    };
+    session.userId = userId;
     await session.save();
+  }
+
+  public async findSession(connectionId: string) {
+    const session = await Session.primaryKey.get(connectionId);
+    return session;
   }
 
   public async destorySession(connectionId: string) {
@@ -44,6 +50,7 @@ export type ServerMessage = (
   {
     type: "user_connected",
     sessionId: string,
+    username: string,
   } | {
     type: "chat_message_created",
     message: string,
@@ -56,6 +63,9 @@ export type ServerMessage = (
  */
 export type ClientMessage = (
   {
+    type: "login",
+    username: string,
+  } | {
     type: "create_chat_message",
     message: string,
   }

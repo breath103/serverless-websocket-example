@@ -9,8 +9,11 @@ export class Session extends Table {
   public static readonly primaryKey: Query.HashPrimaryKey<Session, string>;
 
   @Decorator.Attribute({ name: "i" })
-  public sessionId: string; // Name of interest that this community attached to
+  public sessionId: string;
 
-  @Decorator.Attribute({ name: "m"})
-  public metadata: any;
+  @Decorator.Attribute({ name: "u" })
+  public userId: string;
+
+  @Decorator.Attribute({ name: "r" })
+  public roomId: string;
 }
