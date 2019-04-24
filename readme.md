@@ -6,7 +6,7 @@
 Lambda / API Gateway / DynamoDB 관리는 Cloudformation과 serverless framework를 사용하였습니다.
 
 
-1. 배포 - **npm run deploy:prod** 
+1. 배포 - **npm run deploy** 
     - 이 스크립트는 다음과 같은 일을 합니다.  
       - TSC compile 
       - npm install
