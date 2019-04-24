@@ -23,3 +23,6 @@ Lambda / API Gateway / DynamoDB 관리는 Cloudformation과 serverless framework
     - 이 스크립트는 다음과 같은 일을 합니다.  
       - sls logs --tail 명령어를 이용해, Lambda의 Log를 실시간으로 출력합니다.
       
+
+https://fz5bsno29d.execute-api.ap-northeast-2.amazonaws.com/prod
+여기서 테스트 해보실수 있습니다.

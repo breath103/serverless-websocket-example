@@ -13,9 +13,16 @@
     <style>
       .login-page {
         position: fixed;
-        width: 100%;
-        height: 100%;
+        width: 38%;
+        height: 38%;
+        margin: 24%;
+        box-sizing: content-box;
+        background: white;
+        border: 1px solid black;
+        border-radius: 10px;
+        padding: 3em 3em;
       }
+
       /* .canvas {
       } */
       .canvas svg {
@@ -48,12 +55,36 @@
           },
           methods: {
             login(event) {
-              this.socket.send(JSON.stringify({
-                type: "login",
-                username: this.usernameInput,
-              }));
-
-              this.username = this.usernameInput;
+              // Connect
+              const socket = new WebSocket(`wss://42miiaobvk.execute-api.ap-northeast-2.amazonaws.com/prod?userId=${this.usernameInput}`);
+              socket.onopen = (event) => {
+                console.log("Open :", event);
+                // Login Success
+                this.username = this.usernameInput;
+              };
+              socket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                console.log("Message :", data);
+                switch (data.type) {
+                  case "chat_message_created": {
+                    this.messages.push({
+                      message: data.message,
+                      sessionId: data.sessionId,
+                    });
+                  } break;
+                  case "stroke_created": {
+                    // Draw locally,
+                    this.strokes.push(data.stroke);
+                  } break;
+                }
+              };
+              // socket.onerror = (event) => {
+              //   console.log("Error :", event);
+              // };
+              // socket.onclose = (event) => {
+              //   console.log("Close :", event);
+              // };
+              this.socket = socket;
             },
             onCanvasClicked(event) {
               const stroke = {
@@ -83,39 +114,8 @@
                 this.message = "";
               }
             },
-            connect() {
-              const socket = new WebSocket("wss://42miiaobvk.execute-api.ap-northeast-2.amazonaws.com/prod?userId=abcdefg");
-              socket.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                console.log("Message :", data);
-                switch (data.type) {
-                  case "chat_message_created": {
-                    this.messages.push({
-                      message: data.message,
-                      sessionId: data.sessionId,
-                    });
-                  } break;
-                  case "stroke_created": {
-                    // Draw locally,
-                    this.strokes.push(data.stroke);
-                  } break;
-                }
-              };
-              socket.onopen = (event) => {
-                console.log("Open :", event);
-              };
-              socket.onerror = (event) => {
-                console.log("Error :", event);
-              };
-              socket.onclose = (event) => {
-                console.log("Close :", event);
-              };
-              window.socket = this.socket = socket;
-            }
           }
         });
-
-        app.connect();
 
         window.app = app;
       });
@@ -127,10 +127,17 @@
     <div id="app">
       <!-- login page -->
       <div v-if="username === null" class="login-page">
-        <div class="container">
-          <h1>Login</h1>
-          <input type="text" v-model="usernameInput"/>
-          <button class="btn btn-primary" v-on:click="login">Login</button>
+        <div class="container-fluid">
+          <div class="row">
+            <h1>Login</h1>
+          </div>
+          <div class="row">
+            <label class="col-sm-2 col-form-label">Username</label>
+            <input type="text" class="form-control-plaintext" v-model="usernameInput"/>
+          </div>
+          <div class="row">
+            <button class="btn btn-primary" v-on:click="login">Login</button>
+          </div>
         </div>
       </div>
 
