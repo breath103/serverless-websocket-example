@@ -3,7 +3,7 @@ import { Session } from "../models";
 
 export class SessionManager {
   public apiGateway = new AWS.ApiGatewayManagementApi({
-    endpoint: `https://nij9jx7po5.execute-api.us-east-1.amazonaws.com/prod`
+    endpoint: "https://42miiaobvk.execute-api.ap-northeast-2.amazonaws.com/prod",
   });
 
   public async createSession(
@@ -55,6 +55,11 @@ export type ServerMessage = (
     type: "chat_message_created",
     message: string,
     sessionId: string,
+  } | {
+    type: "stroke_created",
+    stroke: {
+      x: number, y: number, color: string, size: number,
+    }
   }
 );
 
@@ -63,10 +68,12 @@ export type ServerMessage = (
  */
 export type ClientMessage = (
   {
-    type: "login",
-    username: string,
-  } | {
     type: "create_chat_message",
     message: string,
+  }| {
+    type: "create_stroke",
+    stroke: {
+      x: number, y: number, color: string, size: number,
+    }
   }
 );

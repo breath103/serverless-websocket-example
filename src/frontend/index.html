@@ -16,6 +16,12 @@
         width: 100%;
         height: 100%;
       }
+      /* .canvas {
+      } */
+      .canvas svg {
+        border: 1px solid black;
+      }
+
     </style>
     <script src="https://unpkg.com/vue"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.js"
@@ -33,9 +39,12 @@
             sessionId: null,
             messages: [],
             username: null,
-
-            users: [],
             usernameInput: null,
+
+            strokeColor: "#ff4ca6",
+            strokeSize: 10,
+
+            strokes: [],
           },
           methods: {
             login(event) {
@@ -45,6 +54,22 @@
               }));
 
               this.username = this.usernameInput;
+            },
+            onCanvasClicked(event) {
+              const stroke = {
+                x: event.offsetX,
+                y: event.offsetY,
+                color: this.strokeColor,
+                size: this.strokeSize,
+              };
+
+              console.log("COLOR : ", stroke);
+
+              // Send Server
+              this.socket.send(JSON.stringify({
+                type: "create_stroke",
+                stroke
+              }));
             },
             sendMessage(event) {
               console.log(this.message);
@@ -59,22 +84,20 @@
               }
             },
             connect() {
-              const socket = new WebSocket("wss://nij9jx7po5.execute-api.us-east-1.amazonaws.com/prod");
+              const socket = new WebSocket("wss://42miiaobvk.execute-api.ap-northeast-2.amazonaws.com/prod?userId=abcdefg");
               socket.onmessage = (event) => {
                 const data = JSON.parse(event.data);
                 console.log("Message :", data);
                 switch (data.type) {
-                  case "user_connected": {
-                    this.users.push({
-                      username: data.username,
-                      sessionId: data.sessionId,
-                    });
-                  } break;
                   case "chat_message_created": {
                     this.messages.push({
                       message: data.message,
                       sessionId: data.sessionId,
                     });
+                  } break;
+                  case "stroke_created": {
+                    // Draw locally,
+                    this.strokes.push(data.stroke);
                   } break;
                 }
               };
@@ -113,14 +136,33 @@
 
       <!-- logged in -->
       <div v-else>
-        <div class="container">
+        <div class="container-fluid">
           <div class="row">
             <h1 class="display-4">Quiz</h1>
             <div>@{{ username }}</div>
           </div>
           <div class="row">
+            <!-- canvas-->
+            <div class="col">
+              <div class="drawing-tools">
+                <div>
+                  Color: <input v-model="strokeColor" type="color" />
+                </div>
+                <div>
+                  Size: <input v-model="strokeSize" type="range" min="1" max="20" step="1" />
+                </div>
+              </div>
+              <div class="canvas">
+                <svg style="width:500px; height: 500px" @click="onCanvasClicked">
+                  <g v-for="stroke of strokes">
+                    <circle :cx="stroke.x" :cy="stroke.y" :r="stroke.size" :fill="stroke.color" />
+                  </g>
+                </svg>
+              </div>
+            </div>
+
             <!-- Message List -->
-            <div class="col-8">
+            <div class="col-4">
               <div class="container-fluid">
                 <div class="row">
                   <ul>
@@ -132,26 +174,6 @@
                 <div class="row">
                   <input type="text" v-model="message"/>
                   <button class="btn btn-primary" v-on:click="sendMessage">Send</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- User List -->
-            <div class="col-4">
-              <div class="container-fluid">
-                <div class="row">
-                  <div class="col">
-                    <h4>Users</h4>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col">
-                    <ul>
-                      <li v-for="user in users">
-                        {{ user.username }} #{{user.sessionId}}
-                      </li>
-                    </ul>
-                  </div>
                 </div>
               </div>
             </div>

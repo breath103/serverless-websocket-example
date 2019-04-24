@@ -4,6 +4,7 @@ provider:
   name: aws
   runtime: nodejs8.10
   stage: prod
+  region: ap-northeast-2
   environment:
     DEBUG: "*"
   iamRoleStatements:
@@ -55,18 +56,6 @@ resources:
       Properties:
         BillingMode: PAY_PER_REQUEST
         TableName: chat_prod_sessions
-        AttributeDefinitions:
-          - AttributeName: i
-            AttributeType: S
-        KeySchema:
-          - AttributeName: i
-            KeyType: HASH
-
-    DynamoDBRoomTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        BillingMode: PAY_PER_REQUEST
-        TableName: chat_prod_room
         AttributeDefinitions:
           - AttributeName: i
             AttributeType: S
