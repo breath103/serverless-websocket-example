@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
+          integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ"
+          crossorigin="anonymous">
+    <style>
+      .login-page {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.js"
+            integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment-with-locales.js"></script>
+
+    <script type="text/javascript">
+      $(function () {
+        const app = new Vue({
+          el: '#app',
+          data: {
+            socket: null,
+            message: "",
+            sessionId: null,
+            messages: [],
+            username: null,
+
+            users: [],
+            usernameInput: null,
+          },
+          methods: {
+            login(event) {
+              this.socket.send(JSON.stringify({
+                type: "login",
+                username: this.usernameInput,
+              }));
+
+              this.username = this.usernameInput;
+            },
+            sendMessage(event) {
+              console.log(this.message);
+
+              if (this.message) {
+                this.socket.send(JSON.stringify({
+                  type: "create_chat_message",
+                  message: this.message,
+                }));
+
+                this.message = "";
+              }
+            },
+            connect() {
+              const socket = new WebSocket("wss://nij9jx7po5.execute-api.us-east-1.amazonaws.com/prod");
+              socket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                console.log("Message :", data);
+                switch (data.type) {
+                  case "user_connected": {
+                    this.users.push({
+                      username: data.username,
+                      sessionId: data.sessionId,
+                    });
+                  } break;
+                  case "chat_message_created": {
+                    this.messages.push({
+                      message: data.message,
+                      sessionId: data.sessionId,
+                    });
+                  } break;
+                }
+              };
+              socket.onopen = (event) => {
+                console.log("Open :", event);
+              };
+              socket.onerror = (event) => {
+                console.log("Error :", event);
+              };
+              socket.onclose = (event) => {
+                console.log("Close :", event);
+              };
+              window.socket = this.socket = socket;
+            }
+          }
+        });
+
+        app.connect();
+
+        window.app = app;
+      });
+    </script>
+    <title>Quiz</title>
+  </head>
+
+  <body>
+    <div id="app">
+      <!-- login page -->
+      <div v-if="username === null" class="login-page">
+        <div class="container">
+          <h1>Login</h1>
+          <input type="text" v-model="usernameInput"/>
+          <button class="btn btn-primary" v-on:click="login">Login</button>
+        </div>
+      </div>
+
+      <!-- logged in -->
+      <div v-else>
+        <div class="container">
+          <div class="row">
+            <h1 class="display-4">Quiz</h1>
+            <div>@{{ username }}</div>
+          </div>
+          <div class="row">
+            <!-- Message List -->
+            <div class="col-8">
+              <div class="container-fluid">
+                <div class="row">
+                  <ul>
+                    <li v-for="message in messages">
+                      {{ message }}
+                    </li>
+                  </ul>
+                </div>
+                <div class="row">
+                  <input type="text" v-model="message"/>
+                  <button class="btn btn-primary" v-on:click="sendMessage">Send</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- User List -->
+            <div class="col-4">
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col">
+                    <h4>Users</h4>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <ul>
+                      <li v-for="user in users">
+                        {{ user.username }} #{{user.sessionId}}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
