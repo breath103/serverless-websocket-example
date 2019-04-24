@@ -61,7 +61,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
             type: "stroke_created",
             stroke: payload.stroke,
           });
-        }
+        } break;
         default: {
           throw new Error(`Invalid message: ${JSON.stringify(payload)}`);
         }
