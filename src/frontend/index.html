@@ -103,8 +103,6 @@
                   size: this.strokeSize,
                 };
 
-                console.log("COLOR : ", stroke);
-
                 // Send Server
                 this.socket.send(JSON.stringify({
                   type: "create_stroke",
@@ -113,8 +111,6 @@
               }
             },
             sendMessage(event) {
-              console.log(this.message);
-
               if (this.message) {
                 this.socket.send(JSON.stringify({
                   type: "create_chat_message",
