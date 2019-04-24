@@ -51,6 +51,8 @@
             strokeColor: "#ff4ca6",
             strokeSize: 10,
 
+            isMouseDown: false,
+
             strokes: [],
           },
           methods: {
@@ -86,21 +88,29 @@
               // };
               this.socket = socket;
             },
-            onCanvasClicked(event) {
-              const stroke = {
-                x: event.offsetX,
-                y: event.offsetY,
-                color: this.strokeColor,
-                size: this.strokeSize,
-              };
+            onCanvasMouseDown(event) {
+              this.isMouseDown = true;
+            },
+            onCanvasMouseUp(event) {
+              this.isMouseDown = false;
+            },
+            onCanvasMouseMove(event) {
+              if (this.isMouseDown) {
+                const stroke = {
+                  x: event.offsetX,
+                  y: event.offsetY,
+                  color: this.strokeColor,
+                  size: this.strokeSize,
+                };
 
-              console.log("COLOR : ", stroke);
+                console.log("COLOR : ", stroke);
 
-              // Send Server
-              this.socket.send(JSON.stringify({
-                type: "create_stroke",
-                stroke
-              }));
+                // Send Server
+                this.socket.send(JSON.stringify({
+                  type: "create_stroke",
+                  stroke
+                }));
+              }
             },
             sendMessage(event) {
               console.log(this.message);
@@ -160,7 +170,12 @@
                 </div>
               </div>
               <div class="canvas">
-                <svg style="width:500px; height: 500px" @click="onCanvasClicked">
+                <svg
+                    style="width:500px; height: 500px"
+                    @mousedown="onCanvasMouseDown"
+                    @mouseup="onCanvasMouseUp"
+                    @mousemove="onCanvasMouseMove"
+                >
                   <g v-for="stroke of strokes">
                     <circle :cx="stroke.x" :cy="stroke.y" :r="stroke.size" :fill="stroke.color" />
                   </g>
