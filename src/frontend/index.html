@@ -85,7 +85,7 @@
   <body>
     <div id="app">
       <!-- login page -->
-      <div v-if="!isLogin" class="wrapper">
+      <div v-if="!loggedIn" class="wrapper">
         <div>
           <div>
             <div class='logo'>
@@ -107,7 +107,7 @@
         </div>
       </div>
       <!-- logged in -->
-      <div v-if="isLogin" class="wrapper quiz">
+      <div v-if="loggedIn" class="wrapper quiz">
         <div>
           <div>
             <h2>Painting Quiz</h2>
@@ -138,24 +138,6 @@
                 </svg>
               </div>
             </div>
-
-            <!-- Message List -->
-            <div class='chat'>
-              <div>
-                <div>
-                  <ul>
-                    <li v-for="m in messages">
-                    message: {{ m.message }},
-                    sessionId: {{ m.sessionId }}
-                    </li>
-                  </ul>
-                </div>
-                <div>
-                  <input type="text" v-model="message" v-on:keyup="onKeyUpChat"/>
-                  <button class="btn btn-primary" v-on:click="sendMessage">Send</button>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -173,9 +155,7 @@
           data: {
             baseUrl: "wss://42miiaobvk.execute-api.ap-northeast-2.amazonaws.com/prod",
             socket: null,
-            message: "",
             sessionId: null,
-            messages: [],
             username: null,
             usernameInput: null,
 
@@ -183,7 +163,7 @@
             strokeSize: 7,
 
             isMouseDown: false,
-            isLogin: false,
+            loggedIn: false,
 
             strokes: [],
           },
@@ -198,30 +178,18 @@
                 console.log("Open :", event);
                 // Login Success
                 this.username = this.usernameInput;
-                this.isLogin = true;
+                this.loggedIn = true;
               };
               socket.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                console.log("Message :", data);
-                switch (data.type) {
-                  case "chat_message_created": {
-                    this.messages.push({
-                      message: data.message,
-                      sessionId: data.sessionId,
-                    });
-                  } break;
-                  case "stroke_created": {
-                    // Draw locally,
-                    this.strokes.push(data.stroke);
-                  } break;
-                }
+                console.log("Message :", event);
               };
-              // socket.onerror = (event) => {
-              //   console.log("Error :", event);
-              // };
-              // socket.onclose = (event) => {
-              //   console.log("Close :", event);
-              // };
+              socket.onerror = (event) => {
+                console.log("Error :", event);
+              };
+              socket.onclose = (event) => {
+                console.log("Close :", event);
+              };
+
               this.socket = socket;
             },
             onCanvasMouseDown(event) {
@@ -251,25 +219,8 @@
                 this.login();
               }
             },
-            onKeyUpChat(event) {
-              if(event.keyCode === 13) {
-                this.sendMessage();
-              }
-            },
-            sendMessage(event) {
-              if (this.message) {
-                this.socket.send(JSON.stringify({
-                  type: "create_chat_message",
-                  message: this.message,
-                }));
-
-                this.message = "";
-              }
-            },
           }
         });
-
-        window.app = app;
       });
     </script>
   </body>
