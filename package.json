@@ -12,7 +12,8 @@
     "pack": "rm -f dst.zip && cp package.json dst/package.json && (cp package-lock.json dst/ || true) && (cp .npmrc dst/.npmrc || true) && cd dst && npm install --cache=../.npm --production && npm ls && zip -rqy ../dst.zip . && cd ..",
     "deploy": "npm run build && npm run pack && serverless deploy",
     "info": "sls info",
-    "log": "sls logs -t -f websocket --startTime 1m --interval 5s"
+    "log": "sls logs -t -f websocket --startTime 1m --interval 5s",
+    "destory": "sls remove"
   },
   "engines": {
     "node": "^8.10.0",

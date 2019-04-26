@@ -12,16 +12,13 @@ provider:
       Action:
         - "dynamodb:*"
       Resource: "*"
+
     # For send message to client from server
     - Effect: Allow
       Action:
         - "execute-api:ManageConnections"
       Resource:
         - "arn:aws:execute-api:*:*:**/@connections/*"
-
-  # WebSocket API Setting
-  # websocketsApiName: custom-websockets-api-name
-  # websocketsApiRouteSelectionExpression: $request.body.action # custom routes are selected by the value of the action property in the body
 
 package:
   artifact: dst.zip
