@@ -26,3 +26,7 @@ Lambda / API Gateway / DynamoDB 관리는 Cloudformation과 serverless framework
 
 https://fz5bsno29d.execute-api.ap-northeast-2.amazonaws.com/prod
 여기서 테스트 해보실수 있습니다.
+
+
+# HandsOn Guide
+https://www.icloud.com/keynote/0fL0mibQtgTg4ABkkZz91Qi0g#Handson

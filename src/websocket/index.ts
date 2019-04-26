@@ -49,6 +49,13 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 
       switch (payload.type) {
         // tslint:disable:align
+        case "create_chat_message": {
+          await broadcastMessageToClient({
+            type: "chat_message_created",
+            message: payload.message,
+            sessionId,
+          });
+        } break;
         case "create_stroke": {
           await broadcastMessageToClient({
             type: "stroke_created",
