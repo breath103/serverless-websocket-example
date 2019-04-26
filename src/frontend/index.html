@@ -4,32 +4,162 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
     <!-- Bootstrap CSS -->
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
           integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ"
           crossorigin="anonymous">
     <style>
-      .login-page {
-        position: fixed;
-        width: 38%;
+      body {
+        margin: auto;
+        text-align: center;
+      }
+      .wrapper {
+        width: 520px;
         height: 38%;
-        margin: 24%;
-        box-sizing: content-box;
+        margin: auto;
+        margin-top: 10%;
+        /* box-sizing: content-box; */
         background: white;
         border: 1px solid black;
         border-radius: 10px;
-        padding: 3em 3em;
+        box-sizing: content-box;
       }
-
+      .logo {
+        width: 100%;
+        margin: auto;
+      }
+      .logo .and {
+        width: 10%;
+      }
+      .sls-logo {
+        width: 65%;
+      }
+      .vingle-logo {
+        width: 25%;
+      }
       /* .canvas {
       } */
       .canvas svg {
         border: 1px solid black;
       }
-
+      .title, div.login-btn, div.username {
+        text-align: left;
+        margin-left: 2rem;
+        margin-bottom: 1rem;
+      }
+      div.username {
+        margin-top: 1rem;
+        text-align: left;
+      }
+      label.username {
+        display: inline;
+        font-weight: bold;
+      }
+      input.username {
+        width: auto;
+      }
+      div.login-btn {
+        margin-top: 1rem;
+      }
+      .drawing-tools,.chat {
+        text-align: left;
+        margin-left: 20px;
+      }
+      .drawing-tools div {
+        margin-bottom: 0.5rem;
+      }
+      .quiz {
+        border: none;
+      }
+      @media screen and (max-width: 992px) {
+        .login-page {
+          width: 80%;
+          height: 50%;
+        }
+      }
     </style>
+    <title>Quiz</title>
+  </head>
+
+  <body>
+    <div id="app">
+      <!-- login page -->
+      <div v-if="!isLogin" class="wrapper">
+        <div>
+          <div>
+            <div class='logo'>
+              <img class='vingle-logo' src="https://media.glassdoor.com/sqll/707792/vingle-squarelogo-1464185262375.png" alt="">
+              <span class='and'>&nbsp;</span>
+              <img class='sls-logo' src="https://d294hpjvab0qe2.cloudfront.net/img/logo.24b308a8.jpeg" alt="">
+            </div>
+            <div class='title'>
+              <h2>Vingle & AWSKRUG <br/> Serverless Handson <br/>2019-Part.1</h2>
+            </div>
+          </div>
+          <div class='username'>
+            <label class="username">Username:</label>
+            <input type="text" class="form-control username" v-on:keyup="onKeyUpUsername" v-model="usernameInput"/>
+          </div>
+          <div class='login-btn'>
+            <button class="btn btn-primary" v-on:click="login">Login</button>
+          </div>
+        </div>
+      </div>
+      <!-- logged in -->
+      <div v-if="isLogin" class="wrapper quiz">
+        <div>
+          <div>
+            <h2>Painting Quiz</h2>
+          </div>
+          <div>
+            <div>
+              <div class="drawing-tools">
+                <div><b>Your username:</b> {{ username }}</div>
+                <div>
+                  <b>Color picker:</b>
+                  <input v-model="strokeColor" type="color" />
+                </div>
+                <div>
+                  <b>Size: </b>
+                  <input v-model="strokeSize" type="range" min="1" max="20" step="1" />
+                </div>
+              </div>
+              <!-- canvas-->
+              <div class="canvas">
+                <svg
+                    style="width:500px; height: 500px"
+                    @mousedown="onCanvasMouseDown"
+                    @mouseup="onCanvasMouseUp"
+                    @mousemove="onCanvasMouseMove">
+                  <g v-for="stroke of strokes">
+                    <circle :cx="stroke.x" :cy="stroke.y" :r="stroke.size" :fill="stroke.color" />
+                  </g>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Message List -->
+            <div class='chat'>
+              <div>
+                <div>
+                  <ul>
+                    <li v-for="m in messages">
+                    message: {{ m.message }},
+                    sessionId: {{ m.sessionId }}
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <input type="text" v-model="message" v-on:keyup="onKeyUpChat"/>
+                  <button class="btn btn-primary" v-on:click="sendMessage">Send</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <script src="https://unpkg.com/vue"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.js"
             integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
@@ -41,6 +171,7 @@
         const app = new Vue({
           el: '#app',
           data: {
+            baseUrl: "wss://42miiaobvk.execute-api.ap-northeast-2.amazonaws.com/prod",
             socket: null,
             message: "",
             sessionId: null,
@@ -49,20 +180,25 @@
             usernameInput: null,
 
             strokeColor: "#ff4ca6",
-            strokeSize: 10,
+            strokeSize: 7,
 
             isMouseDown: false,
+            isLogin: false,
 
             strokes: [],
+          },
+          created() {
+            this.strokeColor =  '#'+(Math.random()*0xF2F2F2<<0).toString(16);
           },
           methods: {
             login(event) {
               // Connect
-              const socket = new WebSocket(`wss://42miiaobvk.execute-api.ap-northeast-2.amazonaws.com/prod?userId=${this.usernameInput}`);
+              const socket = new WebSocket(`${this.baseUrl}?userId=${this.usernameInput}`);
               socket.onopen = (event) => {
                 console.log("Open :", event);
                 // Login Success
                 this.username = this.usernameInput;
+                this.isLogin = true;
               };
               socket.onmessage = (event) => {
                 const data = JSON.parse(event.data);
@@ -110,6 +246,16 @@
                 }));
               }
             },
+            onKeyUpUsername(event) {
+              if(event.keyCode === 13) {
+                this.login();
+              }
+            },
+            onKeyUpChat(event) {
+              if(event.keyCode === 13) {
+                this.sendMessage();
+              }
+            },
             sendMessage(event) {
               if (this.message) {
                 this.socket.send(JSON.stringify({
@@ -126,78 +272,5 @@
         window.app = app;
       });
     </script>
-    <title>Quiz</title>
-  </head>
-
-  <body>
-    <div id="app">
-      <!-- login page -->
-      <div v-if="username === null" class="login-page">
-        <div class="container-fluid">
-          <div class="row">
-            <h1>Login</h1>
-          </div>
-          <div class="row">
-            <label class="col-sm-2 col-form-label">Username</label>
-            <input type="text" class="form-control-plaintext" v-model="usernameInput"/>
-          </div>
-          <div class="row">
-            <button class="btn btn-primary" v-on:click="login">Login</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- logged in -->
-      <div v-else>
-        <div class="container-fluid">
-          <div class="row">
-            <h1 class="display-4">Quiz</h1>
-            <div>@{{ username }}</div>
-          </div>
-          <div class="row">
-            <!-- canvas-->
-            <div class="col">
-              <div class="drawing-tools">
-                <div>
-                  Color: <input v-model="strokeColor" type="color" />
-                </div>
-                <div>
-                  Size: <input v-model="strokeSize" type="range" min="1" max="20" step="1" />
-                </div>
-              </div>
-              <div class="canvas">
-                <svg
-                    style="width:500px; height: 500px"
-                    @mousedown="onCanvasMouseDown"
-                    @mouseup="onCanvasMouseUp"
-                    @mousemove="onCanvasMouseMove"
-                >
-                  <g v-for="stroke of strokes">
-                    <circle :cx="stroke.x" :cy="stroke.y" :r="stroke.size" :fill="stroke.color" />
-                  </g>
-                </svg>
-              </div>
-            </div>
-
-            <!-- Message List -->
-            <div class="col-4">
-              <div class="container-fluid">
-                <div class="row">
-                  <ul>
-                    <li v-for="message in messages">
-                      {{ message }}
-                    </li>
-                  </ul>
-                </div>
-                <div class="row">
-                  <input type="text" v-model="message"/>
-                  <button class="btn btn-primary" v-on:click="sendMessage">Send</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </body>
 </html>
