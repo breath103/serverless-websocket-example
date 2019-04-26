@@ -14,8 +14,8 @@
         margin: auto;
         text-align: center;
       }
-      .login-page {
-        width: 38%;
+      .wrapper {
+        width: 520px;
         height: 38%;
         margin: auto;
         margin-top: 20%;
@@ -33,10 +33,10 @@
         width: 10%;
       }
       .sls-logo {
-        width: 60%;
+        width: 65%;
       }
       .vingle-logo {
-        width: 20%;
+        width: 25%;
       }
       /* .canvas {
       } */
@@ -54,12 +54,23 @@
       }
       label.username {
         display: inline;
+        font-weight: bold;
       }
       input.username {
         width: auto;
       }
       div.login-btn {
         margin-top: 1rem;
+      }
+      .drawing-tools,.chat {
+        text-align: left;
+        margin-left: 20px;
+      }
+      .drawing-tools div {
+        margin-bottom: 0.5rem;
+      }
+      .quiz {
+        border: none;
       }
       @media screen and (max-width: 992px) {
         .login-page {
@@ -74,16 +85,16 @@
   <body>
     <div id="app">
       <!-- login page -->
-      <div v-if="!isLogin" class="login-page">
+      <div v-if="!isLogin" class="wrapper">
         <div>
-          <div class="row">
+          <div>
             <div class='logo'>
               <img class='vingle-logo' src="https://media.glassdoor.com/sqll/707792/vingle-squarelogo-1464185262375.png" alt="">
               <span class='and'>&nbsp;</span>
               <img class='sls-logo' src="https://d294hpjvab0qe2.cloudfront.net/img/logo.24b308a8.jpeg" alt="">
             </div>
             <div class='title'>
-              <h2>Vingle & AWSKRUG <br/> 서버리스 핸즈온 2019-Part.1</h2>
+              <h2>Vingle & AWSKRUG <br/> Serverless Handson <br/>2019-Part.1</h2>
             </div>
           </div>
           <div class='username'>
@@ -96,23 +107,25 @@
         </div>
       </div>
       <!-- logged in -->
-      <div v-if="isLogin">
+      <div v-if="isLogin" class="wrapper quiz">
         <div>
-          <div class="row">
-            <h1 class="display-4">Quiz</h1>
-            <div>@{{ username }}</div>
+          <div>
+            <h2>Painting Quiz</h2>
           </div>
-          <div class="row">
-            <!-- canvas-->
-            <div class="col">
+          <div>
+            <div>
               <div class="drawing-tools">
+                <div><b>Your username:</b> {{ username }}</div>
                 <div>
-                  Color: <input v-model="strokeColor" type="color" />
+                  <b>Color picker:</b>
+                  <input v-model="strokeColor" type="color" />
                 </div>
                 <div>
-                  Size: <input v-model="strokeSize" type="range" min="1" max="20" step="1" />
+                  <b>Size: </b>
+                  <input v-model="strokeSize" type="range" min="1" max="20" step="1" />
                 </div>
               </div>
+              <!-- canvas-->
               <div class="canvas">
                 <svg
                     style="width:500px; height: 500px"
@@ -127,17 +140,18 @@
             </div>
 
             <!-- Message List -->
-            <div class="col-4">
-              <div class="container-fluid">
-                <div class="row">
+            <div class='chat'>
+              <div>
+                <div>
                   <ul>
-                    <li v-for="message in messages">
-                      {{ message }}
+                    <li v-for="m in messages">
+                    message: {{ m.message }},
+                    sessionId: {{ m.sessionId }}
                     </li>
                   </ul>
                 </div>
-                <div class="row">
-                  <input type="text" v-model="message"/>
+                <div>
+                  <input type="text" v-model="message" v-on:keyup="onKeyUpChat"/>
                   <button class="btn btn-primary" v-on:click="sendMessage">Send</button>
                 </div>
               </div>
@@ -166,12 +180,15 @@
             usernameInput: null,
 
             strokeColor: "#ff4ca6",
-            strokeSize: 10,
+            strokeSize: 7,
 
             isMouseDown: false,
             isLogin: false,
 
             strokes: [],
+          },
+          created() {
+            this.strokeColor =  '#'+(Math.random()*0xF2F2F2<<0).toString(16);
           },
           methods: {
             login(event) {
@@ -232,6 +249,11 @@
             onKeyUpUsername(event) {
               if(event.keyCode === 13) {
                 this.login();
+              }
+            },
+            onKeyUpChat(event) {
+              if(event.keyCode === 13) {
+                this.sendMessage();
               }
             },
             sendMessage(event) {
