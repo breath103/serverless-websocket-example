@@ -3,14 +3,12 @@ import * as debug from "debug";
 
 import {
   ClientMessage,
-  SessionManager,
-} from "./session_manager";
+  ServerMessage,
+} from "./messages";
 
 import { Session } from "../models";
 
 const logger = debug("Websocket");
-
-const sessionManager = new SessionManager();
 
 export const handler: APIGatewayProxyHandler = async (event) => {
   const context = event.requestContext;
@@ -27,7 +25,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       if (!userId) {
         return {
           statusCode: 401,
-          body: "you must need to provide userId and roomId",
+          body: "you must need to provide userId",
         };
       }
 
@@ -36,28 +34,23 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       session.sessionId = sessionId;
       session.userId = userId;
       await session.save();
+      ////
     } else if (routeKey === "$disconnect") {
+      // Delete Session
       const session = await Session.primaryKey.get(sessionId);
       if (!session) {
-        // very starange.. this should not happen
-      } else {
-        await session.delete();
+        throw new Error("Session not exists!");
       }
+      await session.delete();
+      ////
     } else {
       // All the other actions
       const payload = JSON.parse(event.body!) as ClientMessage;
 
       switch (payload.type) {
         // tslint:disable:align
-        case "create_chat_message": {
-          await sessionManager.broadcastMessageToClient({
-            type: "chat_message_created",
-            message: payload.message,
-            sessionId,
-          });
-        } break;
         case "create_stroke": {
-          await sessionManager.broadcastMessageToClient({
+          await broadcastMessageToClient({
             type: "stroke_created",
             stroke: payload.stroke,
           });
@@ -81,3 +74,29 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     body: "Success",
   };
 };
+
+
+
+
+
+/**
+ *
+ * Server -> Client Messaging features
+ *
+ */
+import * as AWS from "aws-sdk";
+
+const WebsocketAPIGatewayAddress = "https://42miiaobvk.execute-api.ap-northeast-2.amazonaws.com/prod";
+const apiGateway = new AWS.ApiGatewayManagementApi({ endpoint: WebsocketAPIGatewayAddress });
+
+async function sendMessageToClient(sessionId: string, message: ServerMessage) {
+  await apiGateway.postToConnection({
+    ConnectionId: sessionId,
+    Data: JSON.stringify(message),
+  }).promise();
+}
+
+async function broadcastMessageToClient(message: ServerMessage) {
+  const sessions = (await Session.primaryKey.scan({})).records;
+  await Promise.all(sessions.map((record) => sendMessageToClient(record.sessionId, message)));
+}
