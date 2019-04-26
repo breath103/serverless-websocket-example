@@ -182,6 +182,13 @@
               };
               socket.onmessage = (event) => {
                 console.log("Message :", event.data);
+
+                const message = JSON.parse(event.data);
+                if (message.type === "create_stroke") {
+                  this.strokes.push(message.stroke);
+                } else {
+                  // unhandled message
+                }
               };
               socket.onerror = (event) => {
                 console.log("Error :", event);
@@ -206,8 +213,6 @@
                   color: this.strokeColor,
                   size: this.strokeSize,
                 };
-
-                this.strokes.push(stroke);
 
                 const message = {
                   type: "create_stroke",
