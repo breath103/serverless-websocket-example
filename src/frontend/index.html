@@ -181,7 +181,7 @@
                 this.loggedIn = true;
               };
               socket.onmessage = (event) => {
-                console.log("Message :", event);
+                console.log("Message :", event.data);
               };
               socket.onerror = (event) => {
                 console.log("Error :", event);
@@ -207,11 +207,16 @@
                   size: this.strokeSize,
                 };
 
-                // Send Server
-                this.socket.send(JSON.stringify({
+                this.strokes.push(stroke);
+
+                const message = {
                   type: "create_stroke",
                   stroke
-                }));
+                };
+
+                console.log("SENDING: ", message);
+                // Send Server
+                this.socket.send(JSON.stringify(message));
               }
             },
             onKeyUpUsername(event) {
