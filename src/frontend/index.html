@@ -172,25 +172,36 @@
           },
           methods: {
             login(event) {
-              // Connect
-              const socket = new WebSocket(`${this.baseUrl}?userId=${this.usernameInput}`);
-              socket.onopen = (event) => {
-                console.log("Open :", event);
-                // Login Success
-                this.username = this.usernameInput;
-                this.loggedIn = true;
-              };
-              socket.onmessage = (event) => {
-                console.log("Message :", event.data);
-              };
-              socket.onerror = (event) => {
-                console.log("Error :", event);
-              };
-              socket.onclose = (event) => {
-                console.log("Close :", event);
-              };
+              $.getJSON(
+                "https://fz5bsno29d.execute-api.ap-northeast-2.amazonaws.com/prod/api.json"
+              ).done(data => {
+                console.log(data);
 
-              this.socket = socket;
+                this.strokes.push(
+                  ...data.map(r => r.data),
+                );
+
+                // Connect
+                const socket = new WebSocket(`${this.baseUrl}?userId=${this.usernameInput}`);
+                socket.onopen = (event) => {
+                  console.log("Open :", event);
+                  // Login Success
+                  this.username = this.usernameInput;
+                  this.loggedIn = true;
+                };
+                socket.onmessage = (event) => {
+                  console.log("Message :", JSON.parse(event.data));
+                  this.strokes.push(JSON.parse(event.data).stroke);
+                };
+                socket.onerror = (event) => {
+                  console.log("Error :", event);
+                };
+                socket.onclose = (event) => {
+                  console.log("Close :", event);
+                };
+
+                this.socket = socket;
+              });
             },
             onCanvasMouseDown(event) {
               this.isMouseDown = true;
@@ -206,8 +217,6 @@
                   color: this.strokeColor,
                   size: this.strokeSize,
                 };
-
-                this.strokes.push(stroke);
 
                 const message = {
                   type: "create_stroke",

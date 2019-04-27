@@ -1,7 +1,7 @@
 import { APIGatewayProxyHandler } from "aws-lambda";
 import * as debug from "debug";
 
-import { Session } from "../models";
+import { Session, Stroke } from "../models";
 
 const logger = debug("Websocket");
 
@@ -46,6 +46,13 @@ export const handler: APIGatewayProxyHandler = async (event) => {
 
       // Let's echo.
       await broadcastMessageToClient(message);
+
+      if (message.type === "create_stroke") {
+        const stroke = new Stroke();
+        stroke.createdAt = Date.now();
+        stroke.data = message.stroke;
+        await stroke.save();
+      }
     }
   } catch (e) {
     logger("$default Error: %j\n%o", event.body, e);
