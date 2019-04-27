@@ -19,7 +19,7 @@ export class Session extends Table {
 @Decorator.Table({ name: `chat_stroke` })
 export class Stroke extends Table {
   @Decorator.HashPrimaryKey("createdAt")
-  public static readonly primaryKey: Query.HashPrimaryKey<Stroke, string>;
+  public static readonly primaryKey: Query.HashPrimaryKey<Stroke, number>;
 
   @Decorator.Attribute({ name: "createdAt" })
   public createdAt: number;

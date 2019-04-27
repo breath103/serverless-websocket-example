@@ -59,3 +59,15 @@ resources:
         KeySchema:
           - AttributeName: i
             KeyType: HASH
+
+    DynamoDBStrokeTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        BillingMode: PAY_PER_REQUEST
+        TableName: chat_stroke
+        AttributeDefinitions:
+          - AttributeName: createdAt
+            AttributeType: N
+        KeySchema:
+          - AttributeName: createdAt
+            KeyType: HASH
